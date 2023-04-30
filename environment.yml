@@ -1,0 +1,12 @@
+name: lm-training
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.9.*
+  - pip=23.*
+  - black
+  - mypy
+  - pytorch=2.*
+  - transformers=4.*
+  - accelerate
