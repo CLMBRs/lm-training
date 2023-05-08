@@ -1,0 +1,3 @@
+defaults:
+  - tokenizer: word-level
+  - data: raw
