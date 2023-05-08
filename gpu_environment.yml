@@ -13,3 +13,4 @@ dependencies:
   - pytorch-cuda=11.*
   - transformers=4.*
   - accelerate
+  - hydra

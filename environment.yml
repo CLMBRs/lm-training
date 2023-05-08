@@ -10,3 +10,4 @@ dependencies:
   - pytorch=2.*
   - transformers=4.*
   - accelerate
+  - hydra
