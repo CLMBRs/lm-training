@@ -14,6 +14,9 @@ def train_tokenizer(cfg: DictConfig) -> None:
     trainer = hydra.utils.instantiate(cfg.tokenizer.trainer, _convert_="object")
     tokenizer.train([cfg.data.train, cfg.data.valid], trainer)
     tokenizer.save(cfg.tokenizer.output_file)
+    # uncomment to save as a transformers.PreTrainedTokenizer instance- and edit config
+    # to add tokenizer.output_dir
+    # PreTrainedTokenizerFast(tokenizer_object=tokenizer).save_pretrained(cfg.tokenizer.output_dir)
 
 
 if __name__ == "__main__":

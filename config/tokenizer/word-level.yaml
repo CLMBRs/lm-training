@@ -7,6 +7,6 @@ trainer:
   _target_: tokenizers.trainers.WordLevelTrainer
   min_frequency: 2
   special_tokens:
-    - ${tokenizer.model.unk_token}
+    - ${..model.unk_token}
     - "<eos>"
 output_file: models/tokenizer/word-level.json
