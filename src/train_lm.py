@@ -13,6 +13,8 @@ def train_lm(cfg: DictConfig) -> None:
     print(OmegaConf.to_yaml(cfg))
     # build tokenizer
     tokenizer = hydra.utils.instantiate(cfg.tokenizer)
+    # enable padding for training; is this the right way?!
+    tokenizer.enable_padding()
     # get config first, then instantiate model
     # this way, can set vocab size via the tokenizer
     # TODO: stream-line this?

@@ -1,3 +1,6 @@
 _target_: transformers.TrainingArguments
 # see the HF docs on TrainingArguments for more info
 output_dir: ${output_dir}/lm
+# this seems like a hack, for getting the Trainer to play nice with
+# raw text datasets from load_dataset
+remove_unused_columns: False
