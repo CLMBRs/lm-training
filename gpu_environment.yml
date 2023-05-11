@@ -1,4 +1,4 @@
-name: lm-training-gpu
+name: gpu-lm-training
 channels:
   - pytorch
   - nvidia
