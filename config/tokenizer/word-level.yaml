@@ -9,4 +9,4 @@ trainer:
   special_tokens:
     - ${tokenizer.model.unk_token}
     - "<eos>"
-output_file: models/tokenizer/word-level.json
+output_file: ${output_dir}/tokenizer/word-level.json

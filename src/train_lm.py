@@ -4,6 +4,8 @@ Primary script for using HuggingFace Trainer to train a language model.
 
 import hydra
 from omegaconf import DictConfig, OmegaConf
+from transformers import Trainer
+from datasets import load_dataset
 
 
 @hydra.main(config_path="../config", config_name="train-lm", version_base=None)
@@ -22,6 +24,22 @@ def train_lm(cfg: DictConfig) -> None:
     model = hydra.utils.instantiate(cfg.model_class, model_config)
     print(model)
     print(f"Num params: {model.num_parameters()}")
+
+    # build train and val datasets
+    # TODO: generalize from "raw" version?
+    dataset = load_dataset("text", data_files=OmegaConf.to_object(cfg.data.splits))
+    print(dataset)
+    print(dataset['train'])
+
+    training_args = hydra.utils.instantiate(cfg.trainer)
+    trainer = Trainer(
+        args=training_args,
+        model=model,
+        tokenizer=tokenizer,
+        train_dataset=dataset['train'],
+        eval_dataset=dataset['valid'],
+    )
+    trainer.train()
 
 
 if __name__ == "__main__":

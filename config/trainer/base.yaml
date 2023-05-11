@@ -1,0 +1,3 @@
+_target_: transformers.TrainingArguments
+# see the HF docs on TrainingArguments for more info
+output_dir: ${output_dir}/lm

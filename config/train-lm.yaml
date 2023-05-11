@@ -5,7 +5,9 @@
 # from a tokenizer (see src/train_lm.py for more)
 model_class:
   _target_: transformers.AutoModelForCausalLM.from_config
-
+output_dir: models
 defaults:
   - model: transformer
   - tokenizer: from-file
+  - trainer: base
+  - data: raw

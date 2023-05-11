@@ -12,7 +12,7 @@ def train_tokenizer(cfg: DictConfig) -> None:
     if "pre_tokenizer" in cfg.tokenizer:
         tokenizer.pre_tokenizer = hydra.utils.instantiate(cfg.tokenizer.pre_tokenizer)
     trainer = hydra.utils.instantiate(cfg.tokenizer.trainer, _convert_="object")
-    tokenizer.train([cfg.data.train, cfg.data.valid], trainer)
+    tokenizer.train([cfg.data.splits.train, cfg.data.splits.valid], trainer)
     tokenizer.save(cfg.tokenizer.output_file)
 
 
