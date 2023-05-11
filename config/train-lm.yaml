@@ -1,8 +1,15 @@
 defaults:
-  - trainer: default_trainer
   - data: raw
   - dataset: load_dataset_text
-  - override trainer/model/config: causal-small
+  - model: from_config
+  - tokenizer: from-file
+  - training_args: base
+  - override model/config: causal-small
   - _self_
 train_split: "train"
 eval_split: "valid"
+trainer:
+  _target_: transformers.Trainer
+  args: ${training_args}
+  model: ${model}
+  tokenizer: ${tokenizer}
