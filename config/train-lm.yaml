@@ -1,2 +1,3 @@
 defaults:
   - model: transformer
+  - tokenizer: from-file
