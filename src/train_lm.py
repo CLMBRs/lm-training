@@ -14,7 +14,7 @@ def train_lm(cfg: DictConfig) -> None:
     train_ds: Dataset = ds_dict[cfg.train_split]
     eval_ds: Dataset = ds_dict[cfg.eval_split]
     trainer = hydra.utils.instantiate(
-        cfg.trainer, train_dataset=train_ds, eval_dataset=eval_ds
+        cfg.trainer, train_dataset=train_ds, eval_dataset=eval_ds, _convert_="object"
     )
     print(cfg)
     print(trainer)

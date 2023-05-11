@@ -8,3 +8,6 @@ output_dir: ${hydra:runtime.output_dir}/checkpoints
 per_device_train_batch_size: 8
 per_device_eval_batch_size: 8
 seed: 42
+# this seems like a hack, for getting the Trainer to play nice with
+# raw text datasets from load_dataset
+remove_unused_columns: False
