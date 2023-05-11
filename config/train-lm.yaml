@@ -1,0 +1,8 @@
+defaults:
+  - trainer: default_trainer
+  - dataset: load_dataset
+  - override trainer/model/config: causal-small
+  - _self_
+train_split: "train"
+eval_split: "validation"
+test_split: "test"

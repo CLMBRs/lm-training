@@ -7,7 +7,7 @@ import hydra
 from omegaconf import DictConfig, OmegaConf
 
 
-@hydra.main(config_path="../config", config_name="main", version_base=None)
+@hydra.main(config_path="../config", config_name="train-lm", version_base=None)
 def train_lm(cfg: DictConfig) -> None:
     print(OmegaConf.to_yaml(cfg))
     ds_dict: DatasetDict = hydra.utils.instantiate(cfg.dataset)
