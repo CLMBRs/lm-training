@@ -1,2 +1,8 @@
 defaults:
-  - model: transformer
+  - trainer: default_trainer
+  - dataset: load_dataset
+  - _self_
+run_name: "my_run"
+train_split: "train"
+eval_split: "validation"
+test_split: "test"

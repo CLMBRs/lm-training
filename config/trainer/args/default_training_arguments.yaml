@@ -1,0 +1,27 @@
+defaults:  
+  - _self_
+_target_: transformers.TrainingArguments
+auto_find_batch_size: True
+disable_tqdm: True
+eval_delay: 0
+eval_steps: 500
+evaluation_strategy: steps
+full_determinism: False
+gradient_accumulation_steps: 1
+learning_rate: 5.0e-5
+logging_first_step: False
+logging_steps: 500
+logging_strategy: steps
+lr_scheduler_type: linear
+no_cuda: False
+num_train_epochs: 3
+optim: adamw_hf
+output_dir: model/checkpoints/${run_name}
+per_device_train_batch_size: 8
+per_device_eval_batch_size: 8
+save_steps: 500
+save_strategy: steps
+seed: 42
+warmup_ratio: 0.0
+warmup_steps: 0
+weight_decay: 0

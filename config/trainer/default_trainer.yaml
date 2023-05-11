@@ -1,0 +1,9 @@
+defaults:
+  - args: default_training_arguments
+  - model: from_config
+  - optional tokenizer: no_tokenizer
+  # - /dataset@train_dataset: load_from_disk
+  # - /dataset@eval_dataset: load_from_disk
+_target_: transformers.Trainer
+# train_dataset: ${train_dataset}
+# eval_dataset: ${eval_dataset}

@@ -2,6 +2,14 @@
 
 A skeleton for the training of transformer causal language models using HuggingFace libraries and models.
 
+# How to Run
+
+A simple Trainer with a BERT model, with the Rotten Tomatoes HF dataset for its training/validation dataset, can be loaded with the following command:
+
+```
+python src/train_lm.py '+trainer.model.config.pretrained_model_name_or_path=gpt2' '+dataset.path=rotten_tomatoes'
+```
+
 ## Development & Contribution Guidelines
 
 ### Requirements

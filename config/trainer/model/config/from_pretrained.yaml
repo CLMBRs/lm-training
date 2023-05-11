@@ -1,0 +1,4 @@
+defaults:
+  - _self_
+_target_: transformers.AutoConfig.from_pretrained
+pretrained_model_name_or_path: ???
