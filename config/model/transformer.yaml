@@ -1,0 +1,7 @@
+config:
+  _target_: transformers.OPTConfig
+  ffn_dim: 2048
+  hidden_size: 512
+  num_attention_heads: 8
+  num_hidden_layers: 8
+  max_position_embeddings: 512

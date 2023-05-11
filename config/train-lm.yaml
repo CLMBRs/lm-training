@@ -1,3 +1,5 @@
+model_class: transformers.AutoModelForCausalLM
+
 defaults:
   - model: transformer
   - tokenizer: from-file
