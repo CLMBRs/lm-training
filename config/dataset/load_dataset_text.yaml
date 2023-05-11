@@ -1,0 +1,9 @@
+defaults:
+  - _self_
+_target_: datasets.load_dataset
+path: text
+# can also just specify files here as a sub-dict, e.g.
+# train: path/to/train.txt
+# valid: path/to/val.txt
+# nested on elvel beneath data_files
+data_files: ${data.splits}

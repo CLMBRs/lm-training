@@ -1,3 +1,4 @@
 base_dir: null
-train: ${data.base_dir}/train.corpus
-valid: ${data.base_dir}/valid.corpus
+splits:
+  train: ${data.base_dir}/train.corpus
+  valid: ${data.base_dir}/valid.corpus

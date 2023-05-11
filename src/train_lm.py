@@ -10,7 +10,7 @@ from omegaconf import DictConfig, OmegaConf
 @hydra.main(config_path="../config", config_name="train-lm", version_base=None)
 def train_lm(cfg: DictConfig) -> None:
     print(OmegaConf.to_yaml(cfg))
-    ds_dict: DatasetDict = hydra.utils.instantiate(cfg.dataset)
+    ds_dict: DatasetDict = hydra.utils.instantiate(cfg.dataset, _convert_="object")
     train_ds: Dataset = ds_dict[cfg.train_split]
     eval_ds: Dataset = ds_dict[cfg.eval_split]
     trainer = hydra.utils.instantiate(
