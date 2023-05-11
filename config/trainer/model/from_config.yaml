@@ -1,0 +1,4 @@
+defaults:
+  - config: from_pretrained
+  - _self_
+_target_: transformers.AutoModel.from_config

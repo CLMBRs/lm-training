@@ -1,0 +1,10 @@
+defaults:  
+  - _self_
+_target_: transformers.TrainingArguments
+# NOTE: there are quite a large number of arguments that can be passed to the TrainingArguments class
+# this config just falls back on the defaults there, but see the documentation for more info:
+# https://huggingface.co/docs/transformers/v4.29.0/en/main_classes/trainer#transformers.TrainingArguments
+output_dir: ${hydra:runtime.output_dir}/checkpoints
+per_device_train_batch_size: 8
+per_device_eval_batch_size: 8
+seed: 42

@@ -1,4 +1,4 @@
-name: lm-training-gpu
+name: gpu-lm-training
 channels:
   - pytorch
   - nvidia
@@ -13,3 +13,7 @@ dependencies:
   - pytorch-cuda=11.*
   - transformers=4.*
   - accelerate
+  - sentencepiece=0.*
+  - librosa=0.* # can remove if audio processing is not needed
+  - pysoundfile>=0.12.1 # can remove if audio processing is not needed
+  - hydra-core=1.*

@@ -127,3 +127,24 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Mac OS Files
+.DS_Store
+
+# Vim swap files
+*.sw*
+
+# vscode
+.vscode/
+
+# sklearn cache
+*sklearn_cache/
+
+# Binary/Saved Model/Pickle files
+*.bin
+*.model
+*.pkl
+
+# hydra + custom
+outputs/
+models/
