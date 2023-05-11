@@ -1,4 +1,10 @@
-model_class: transformers.AutoModelForCausalLM
+# for HF transformers, just use _target_ and the class name
+# this allows us to instantiate the model via Hydra
+# we define the model config separately (in config/model/) so that
+# we can modify the config programmatically first, i.e. by fetching the vocab size
+# from a tokenizer (see src/train_lm.py for more)
+model_class:
+  _target_: transformers.AutoModelForCausalLM.from_config
 
 defaults:
   - model: transformer
