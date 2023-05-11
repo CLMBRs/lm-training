@@ -13,11 +13,12 @@ def train_lm(cfg: DictConfig) -> None:
     ds_dict: DatasetDict = hydra.utils.instantiate(cfg.dataset)
     train_ds: Dataset = ds_dict[cfg.train_split]
     eval_ds: Dataset = ds_dict[cfg.eval_split]
-    cfg = hydra.utils.instantiate(
-        cfg, trainer={"train_dataset": train_ds, "eval_dataset": eval_ds}
+    trainer = hydra.utils.instantiate(
+        cfg.trainer, train_dataset=train_ds, eval_dataset=eval_ds
     )
     print(cfg)
-    print(cfg.trainer.model)
+    print(trainer)
+    print(trainer.model)
 
 
 if __name__ == "__main__":
