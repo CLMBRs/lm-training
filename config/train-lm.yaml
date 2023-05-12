@@ -6,6 +6,21 @@ defaults:
   - training_args: base
   - override model/config: causal-small
   - _self_
+data:
+  base_dir: data/wiki
+  splits:
+    train: ${data.base_dir}/train_small.txt
+    valid: ${data.base_dir}/valid_small.txt
+    test: ${data.base_dir}/test_small.txt
+tokenizer:
+  tokenizer_file: models/tokenizer/word-level.json
+  # these first two special tokens come from the data
+  unk_token: "<unk>"
+  eos_token: "<eos>"
+  # pad token comes from how we trained the tokenizer; see tokenizer/word-level.yaml
+  pad_token: "<pad>"
+remove_columns_from_tokenized_data:
+  - "text"
 train_split: "train"
 eval_split: "valid"
 trainer:
