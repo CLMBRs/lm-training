@@ -35,11 +35,12 @@ def train_lm(cfg: DictConfig) -> None:
     # whicih will tell the model to return a loss, as needed for trainer
     data_collator = DataCollatorForLanguageModeling(tokenizer=tokenizer, mlm=False)
     trainer = hydra.utils.instantiate(
-        cfg.trainer, train_dataset=train_ds, eval_dataset=eval_ds, data_collator=data_collator, _convert_="object"
+        cfg.trainer,
+        train_dataset=train_ds,
+        eval_dataset=eval_ds,
+        data_collator=data_collator,
+        _convert_="object",
     )
-    print(cfg)
-    print(trainer)
-    print(trainer.model)
     trainer.train()
 
 
