@@ -4,6 +4,8 @@ A skeleton for the training of transformer causal language models using HuggingF
 
 # How to Run
 
+This project demonstrates training (i) a simple whitespace tokenizer and (ii) a small transformer LM on [wikipedia data from Gulordava et al 2018](https://github.com/facebookresearch/colorlessgreenRNNs/tree/main/data).  Their English data has been downloaded and saved in `data/wiki-en/`.  (Note: in principle, one can just use their supplied vocab file to initialize a whitespace tokenizer; we instead are training one just to illustrate the training of a tokenizer, which can be adapted for more complex types (BPE, etc).)
+
 A simple Trainer with a BERT model, with the Rotten Tomatoes HF dataset for its training/validation dataset, can be loaded with the following command:
 
 ```
