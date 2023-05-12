@@ -5,8 +5,8 @@ pre_tokenizer:
   _target_: tokenizers.pre_tokenizers.Whitespace
 trainer:
   _target_: tokenizers.trainers.WordLevelTrainer
-  min_frequency: 2
+  min_frequency: 1
   special_tokens:
     - ${tokenizer.model.unk_token}
     - "<eos>"
-output_file: models/tokenizer/word-level.json
+    - "<pad>"

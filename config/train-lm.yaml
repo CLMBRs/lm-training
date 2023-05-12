@@ -1,8 +1,33 @@
 defaults:
-  - trainer: default_trainer
   - data: raw
   - dataset: load_dataset_text
-  - override trainer/model/config: causal-small
+  - model: from_config
+  - tokenizer: from-file
+  - training_args: base
+  - override model/config: causal-small
   - _self_
+seed: 42
+data:
+  base_dir: data/wiki
+dataset:
+  data_files: ${data.splits}
+tokenizer:
+  tokenizer_file: models/tokenizer/word-level.json
+  # these first two special tokens come from the data
+  unk_token: "<unk>"
+  eos_token: "<eos>"
+  # pad token comes from how we trained the tokenizer; see tokenizer/word-level.yaml
+  pad_token: "<pad>"
 train_split: "train"
 eval_split: "valid"
+training_args:
+  seed: ${seed}
+  save_steps: 10
+  eval_steps: 10
+  logging_steps: 10
+  log_level: info
+trainer:
+  _target_: transformers.Trainer
+  args: ${training_args}
+  model: ${model}
+  tokenizer: ${tokenizer}

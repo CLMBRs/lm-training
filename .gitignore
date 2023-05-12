@@ -148,3 +148,6 @@ dmypy.json
 # hydra + custom
 outputs/
 models/
+
+# data
+data/wiki/*.txt

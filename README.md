@@ -1,14 +1,17 @@
 # lm-training
 
-A skeleton for the training of transformer causal language models using HuggingFace libraries and models.
+A skeleton for the training of transformer causal language models using HuggingFace libraries and models.  This library makes heavy use of [hydra](https://hydra.cc) for configuration management, so it is worth consulting that documentation as needed.
 
 # How to Run
 
-A simple Trainer with a BERT model, with the Rotten Tomatoes HF dataset for its training/validation dataset, can be loaded with the following command:
+This project demonstrates training (i) a simple whitespace tokenizer and (ii) a small transformer LM on [wikipedia data from Gulordava et al 2018](https://github.com/facebookresearch/colorlessgreenRNNs/tree/main/data).  Their English data has been downloaded and saved in `data/wiki-en/`.  (Note: in principle, one can just use their supplied vocab file to initialize a whitespace tokenizer; we instead are training one just to illustrate the training of a tokenizer, which can be adapted for more complex types (BPE, etc).)
 
-```
-python src/train_lm.py '+trainer.model.config.pretrained_model_name_or_path=gpt2' '+dataset.path=rotten_tomatoes'
-```
+To train the tokenizer: `python src/train_tokenizer.py`.  This will save a tokenizer to `models/tokenizer/word-level.json`.  The main configuration used for this script is `config/train-tokenizer.yaml`.
+
+To train an LM: `python src/train_lm.py`.  The main configuration for this script is `config/train-lm.yaml`.  This will save outputs to a `checkpoints` sub-directory of hydra's default output directory (`outputs/DATE/TIME`), which is something that can be configured for your own experiments.
+
+We will add more information on customizing configurations, building experiments, and things like that in the future.
+
 
 ## Development & Contribution Guidelines
 

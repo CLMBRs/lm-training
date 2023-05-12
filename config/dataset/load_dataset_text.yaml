@@ -5,4 +5,4 @@ path: text
 # train: path/to/train.txt
 # valid: path/to/val.txt
 # nested on elvel beneath data_files
-data_files: ${data.splits}
+data_files: ???
