@@ -12,6 +12,8 @@ data:
     train: ${data.base_dir}/train_small.txt
     valid: ${data.base_dir}/valid_small.txt
     test: ${data.base_dir}/test_small.txt
+dataset:
+  data_files: ${data.splits}
 tokenizer:
   tokenizer_file: models/tokenizer/word-level.json
   # these first two special tokens come from the data
