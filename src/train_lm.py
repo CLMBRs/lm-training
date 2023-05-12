@@ -15,22 +15,12 @@ def train_lm(cfg: DictConfig) -> None:
     tokenizer: PreTrainedTokenizerFast = hydra.utils.instantiate(cfg.tokenizer)
     # tokenize the datasets!
     ds_dict = ds_dict.map(
-        # tokenize the text
-        # for language modeling, we don't need token_type_ids, so they are not returned
-        # this is hard-coded for this use case, but could be parameterized in the future
-        # if there's ever a need for that
-        lambda examples: tokenizer(
-            examples["text"], padding=True, return_token_type_ids=False
-        ),
+        lambda examples: tokenizer(examples["text"], padding=True),
         batched=True,
     )
-    # remove columns if specified to do so
-    if "remove_columns_from_tokenized_data" in cfg:
-        ds_dict = ds_dict.remove_columns(cfg.remove_columns_from_tokenized_data)
     # get train and val splits to feed to trainer
     train_ds: Dataset = ds_dict[cfg.train_split]
     eval_ds: Dataset = ds_dict[cfg.eval_split]
-    print(train_ds)
     # data collator will generate labels for language modeling
     # whicih will tell the model to return a loss, as needed for trainer
     data_collator = DataCollatorForLanguageModeling(tokenizer=tokenizer, mlm=False)
