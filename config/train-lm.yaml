@@ -31,3 +31,6 @@ trainer:
   args: ${training_args}
   model: ${model}
   tokenizer: ${tokenizer}
+  callbacks:
+    - _target_: transformers.EarlyStoppingCallback
+      early_stopping_patience: 5

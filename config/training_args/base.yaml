@@ -9,3 +9,4 @@ per_device_train_batch_size: 8
 per_device_eval_batch_size: 8
 evaluation_strategy: steps
 seed: 42
+load_best_model_at_end: true
