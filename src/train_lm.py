@@ -32,7 +32,9 @@ def train_lm(cfg: DictConfig) -> None:
         _convert_="object",
     )
     trainer.train()
-    trainer.save_model(output_dir=f"{trainer.args.output_dir}/best_model")
+    trainer.save_model(
+        output_dir=f"{trainer.args.output_dir}/{'best_model' if trainer.args.load_best_model_at_end else 'last_model'}"
+    )
 
 
 if __name__ == "__main__":
