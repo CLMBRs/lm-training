@@ -4,7 +4,7 @@ hidden_size: 512
 num_attention_heads: 8
 num_hidden_layers: 8
 max_position_embeddings: 512
-# it woudl be nice to infer this automatically from a tokenizer vocab, but doing so
+# it would be nice to infer this automatically from a tokenizer vocab, but doing so
 # would require instantiating the tokenizer, which is not possible in the config
 # in other words, would lose the maximal dependency injection that we currently have
 vocab_size: 30000

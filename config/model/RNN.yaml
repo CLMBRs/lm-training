@@ -1,0 +1,9 @@
+defaults:
+  - _self_
+_target_: model.RNNForLanguageModeling
+rnn_type: RNN
+vocab_size: ???
+embedding_dim: ???
+hidden_dim: ???
+num_layers: ???
+dropout_p: ???

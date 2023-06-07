@@ -1,3 +1,5 @@
+import os
+
 import hydra
 from omegaconf import DictConfig, OmegaConf
 from tokenizers import Tokenizer
@@ -14,6 +16,8 @@ def train_tokenizer(cfg: DictConfig) -> None:
     trainer = hydra.utils.instantiate(cfg.tokenizer.trainer, _convert_="object")
     # pass raw text files (splits) to the trainer
     tokenizer.train([cfg.data.splits[split] for split in cfg.data.splits], trainer)
+
+    os.makedirs(os.path.dirname(cfg.output_file), exist_ok=True)
     tokenizer.save(cfg.output_file)
 
 

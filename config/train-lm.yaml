@@ -1,11 +1,10 @@
 defaults:
   - data: raw
   - dataset: load_dataset_text
-  - model: from_config
   - tokenizer: from-file
   - training_args: base
-  - override model/config: causal-small
   - _self_
+model: ???
 seed: 42
 data:
   base_dir: data/wiki
@@ -18,6 +17,7 @@ tokenizer:
   eos_token: "<eos>"
   # pad token comes from how we trained the tokenizer; see tokenizer/word-level.yaml
   pad_token: "<pad>"
+text_field: "text"
 train_split: "train"
 eval_split: "valid"
 training_args:

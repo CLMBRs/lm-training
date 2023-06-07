@@ -1,0 +1,5 @@
+defaults:
+  - train-lm
+  - model: from_config
+  - override model/config: causal-small
+  - _self_
