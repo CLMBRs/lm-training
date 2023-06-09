@@ -1,10 +1,10 @@
 defaults:
   - data: raw
   - dataset: load_dataset_text
+  - model: from_config
   - tokenizer: from-file
   - training_args: base
   - _self_
-model: ???
 seed: 42
 data:
   base_dir: data/wiki

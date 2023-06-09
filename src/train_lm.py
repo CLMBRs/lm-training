@@ -1,5 +1,6 @@
-"""
-Primary script for using HuggingFace Trainer to train a language model.
+"""Primary script for using HuggingFace Trainer to train a language model.
+
+For examples of how to run, see README.md.
 """
 
 from datasets import Dataset, DatasetDict
