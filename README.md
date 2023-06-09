@@ -12,7 +12,7 @@ We will add more information on customizing configurations, building experiments
 
 To train the tokenizer: `python train_tokenizer.py`.  This will save a tokenizer to `models/tokenizer/word-level.json`.  The main configuration used for this script is `config/train-tokenizer.yaml`.
 
-n.b.: This tokenizer is for demonstration purposes only.  Because the corpus contains special tokens e.g. <unk> and <eos> already, the trained tokenizer will parse these as '<', 'unk'/'eos', and '>'; also, it will fail to insert these tokens in new text.  This problem can be avoided by training the tokenizer on a corpus that does not already include special tokens.
+n.b.: This tokenizer is for demonstration purposes only.  Because the corpus contains special tokens e.g. \<unk\> and \<eos\> already, the trained tokenizer will parse these as '<', 'unk'/'eos', and '>'; also, it will fail to insert these tokens in new text.  This problem can be avoided by training the tokenizer on a corpus that does not already include special tokens.
 
 ## Causal Language Model
 
