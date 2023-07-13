@@ -3,14 +3,16 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  - python>=3.9.*
+  - python=3.9
   - pip=23.*
   - black
   - mypy
   - pytorch=2.*
   - transformers=4.*
   - accelerate
-  - sentencepiece=0.*
+  - sentencepiece=0.* # can omit if sentencepiece models (e.g. ALBERT, XLMRoberta, T5) are not needed
   - hydra-core=1.3.*
-  # - librosa=0.* # add if audio processing is needed
-  # - pysoundfile>=0.12.1 # add if audio processing is needed
+  - strenum
+  # Uncomment following packages if audio processing is needed:
+  # - librosa=0.*
+  # - pysoundfile>=0.12.1

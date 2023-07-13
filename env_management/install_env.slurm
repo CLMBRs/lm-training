@@ -13,13 +13,7 @@
 #SBATCH --output=slurm_output/%x_%j.out # where STDOUT goes
 #SBATCH --error=slurm_output/%x_%j.err # where STDERR goes
 
-# Make sure you submit this script from within the env_management directory; otherwise, move the SBATCH --chdir command
-# at the bottom of this file to the section above and edit it to point to the env_management directory. You can also
-# move the mail-related commands to the top (inserting your own email) if you so wish.
+# Make sure you submit this script from within the env_management directory; otherwise, utilize the SBATCH --chdir
+# command or CLI flag appropriately.
 
 ./env_install+update.sh -n lm-training ../environment.yml
-
-# ignored
-#SBATCH --mail-user=
-#SBATCH --mail-type=BEGIN,END
-#SBATCH --chdir=/mmfs1/gscratch/stf/abhinavp/corpus-filtering/lm-training/env_management/

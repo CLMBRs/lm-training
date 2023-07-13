@@ -4,7 +4,7 @@ A skeleton for the training of transformer causal language models using HuggingF
 
 # How to Run
 
-This project demonstrates training (i) a simple whitespace tokenizer and (ii) two small LM's (a transformer and an RNN) on [wikipedia data from Gulordava et al 2018](https://github.com/facebookresearch/colorlessgreenRNNs/tree/main/data).  Their English data has been downloaded and saved in `data/wiki-en/`.  (Note: in principle, one can just use their supplied vocab file to initialize a whitespace tokenizer; we instead are training one just to illustrate the training of a tokenizer, which can be adapted for more complex types (BPE, etc).)
+This project demonstrates training (i) a simple whitespace tokenizer and (ii) two small LM's (a transformer and an RNN) on [wikipedia data from Gulordava et al 2018](https://github.com/facebookresearch/colorlessgreenRNNs/tree/main/data).  Their English data can be downloaded and saved using the download script at `data/wiki/download.sh`.  (Note: in principle, one can just use their supplied vocab file to initialize a whitespace tokenizer; we instead are training one just to illustrate the training of a tokenizer, which can be adapted for more complex types (BPE, etc).).  The following examples require that the data already be downloaded; if using other data, consult the `data` struct in `config/train-lm.yaml` and the `data/raw.yaml` config file and override the appropriate values.
 
 We will add more information on customizing configurations, building experiments, and things like that in the future.
 
@@ -18,33 +18,40 @@ n.b.: This tokenizer is for demonstration purposes only.  Because the corpus con
 
 ### Transformer
 
-To train a causal LM with the OPT architecture: `python train_lm.py`.  The main configuration for this script is `config/train-lm.yaml`.  This will save outputs to a `checkpoints` sub-directory of hydra's default output directory (`outputs/DATE/TIME`), which is something that can be configured for your own experiments.
+To train a causal LM with the OPT architecture:
+```sh
+python train_lm.py --config-name train-causal-transformer
+```
+
+The main configuration for this script is `config/train-lm.yaml`.  This will save outputs to a `checkpoints` sub-directory of hydra's default output directory (`outputs/DATE/TIME`), which is something that can be configured for your own experiments.
 
 ### RNN/LSTM/GRU
 
 To train an LSTM, run:
 
-```
-python train_lm.py 'model=LSTM' 'model.vocab_size=30000' 'model.embedding_dim=???' 'model.hidden_dim=???' 'model.num_layers=???' 'model.dropout_p=???' '+model.tie_weights=???'
+```sh
+python train_lm.py --config-name train-lstm
 ```
 
-You can replace the parameters indicated by `???` with your desired values.  `model.vocab_size` should align with the vocab of the tokenizer.  The `embedding_dim`, `hidden_dim`, and `num_layers` are integers; `dropout_p` is a float between 0.0 and 1.0; and `tie_weights` is a boolean--- if `True`, `embedding_dim` should be equal to `hidden_dim`.
+To change the hyperparameters of the network, consult the arguments in `model/LSTM.yaml` and override them accordingly.  Some notes:
+  * `model.vocab_size` should align with the vocab of the tokenizer.
+  * The `embedding_dim`, `hidden_dim`, and `num_layers` are integers; `dropout_p` is a float between 0.0 and 1.0; and `tie_weights` is a boolean.
+  * If `tie_weights` is `True`:`embedding_dim` should be equal to `hidden_dim` for a unidirectional RNN and double it for a bidirectional RNN.
 
 
 As with the transformer, this will save outputs to a `checkpoints` sub-directory of hydra's default output directory (`outputs/DATE/TIME`), which is something that can be configured for your own experiments.
 
+To train a vanilla RNN or GRU, you can override the `rnn_type` argument, e.g. for a vanilla RNN:
 
-To train a vanilla RNN or GRU, you can copy and modify the main LSTM config at `config/model/LSTM.yaml` so that the `rnn_type` argument says `RNN` or `GRU`, respectively, or you can override via the console, e.g. for a vanilla RNN:
-
-```
-python train_lm.py 'model=LSTM' 'model.rnn_type=RNN' 'model.vocab_size=30000' 'model.embedding_dim=???' 'model.hidden_dim=???' 'model.num_layers=???' 'model.dropout_p=???' '+model.tie_weights=???'
+```sh
+python train_lm.py --config-name train-lstm 'model.rnn_type=RNN'
 ```
 
 ### Changing Config Defaults
 
 You may consult the config hierarchy starting with `config/train_lm.yaml` / `config/train_tokenizer.yaml` to see what the default parameters are and how to override them.  As an example, while training an LM, you could change the tokenizer used and the data directory containing the train/validation/test data as follows:
 
-```
+```sh
 python train_lm.py 'tokenizer.tokenizer_file=path/to/my_tokenizer/tokenizer.json' 'data.base_dir=path/to/my/data/' [...remaining arguments...]
 ```
 

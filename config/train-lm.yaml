@@ -1,17 +1,16 @@
 defaults:
   - data: raw
   - dataset: load_dataset_text
-  - model: from_config
   - tokenizer: from-file
   - training_args: base
   - _self_
 seed: 42
 data:
-  base_dir: data/wiki
+  base_dir: ../data/wiki
 dataset:
   data_files: ${data.splits}
 tokenizer:
-  tokenizer_file: models/tokenizer/word-level.json
+  tokenizer_file: ../models/tokenizer/word-level.json
   # these first two special tokens come from the data
   unk_token: "<unk>"
   eos_token: "<eos>"
@@ -20,6 +19,7 @@ tokenizer:
 text_field: "text"
 train_split: "train"
 eval_split: "valid"
+model: ???
 training_args:
   seed: ${seed}
   save_steps: 10
