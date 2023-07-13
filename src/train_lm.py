@@ -1,9 +1,10 @@
-"""
-Primary script for using HuggingFace Trainer to train a language model.
+"""Primary script for using HuggingFace Trainer to train a language model.
+
+For examples of how to run, see README.md.
 """
 
-import hydra
 from datasets import Dataset, DatasetDict
+import hydra
 from omegaconf import DictConfig, OmegaConf
 from transformers import DataCollatorForLanguageModeling, PreTrainedTokenizerFast
 
@@ -15,14 +16,14 @@ def train_lm(cfg: DictConfig) -> None:
     tokenizer: PreTrainedTokenizerFast = hydra.utils.instantiate(cfg.tokenizer)
     # tokenize the datasets!
     ds_dict = ds_dict.map(
-        lambda examples: tokenizer(examples["text"], padding=True),
+        lambda examples: tokenizer(examples[cfg.text_field], padding=True),
         batched=True,
     )
     # get train and val splits to feed to trainer
     train_ds: Dataset = ds_dict[cfg.train_split]
     eval_ds: Dataset = ds_dict[cfg.eval_split]
     # data collator will generate labels for language modeling
-    # whicih will tell the model to return a loss, as needed for trainer
+    # which will tell the model to return a loss, as needed for trainer
     data_collator = DataCollatorForLanguageModeling(tokenizer=tokenizer, mlm=False)
     trainer = hydra.utils.instantiate(
         cfg.trainer,
@@ -33,7 +34,8 @@ def train_lm(cfg: DictConfig) -> None:
     )
     trainer.train()
     trainer.save_model(
-        output_dir=f"{trainer.args.output_dir}/{'best_model' if trainer.args.load_best_model_at_end else 'last_model'}"
+        output_dir=f"{trainer.args.output_dir}/"
+        f"{'best_model' if trainer.args.load_best_model_at_end else 'last_model'}"
     )
 
 

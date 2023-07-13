@@ -1,0 +1,11 @@
+defaults:
+  - train-lm
+  - model: LSTM
+  - _self_
+model:
+  vocab_size: 30000
+  embedding_dim: 100
+  hidden_dim: 100
+  num_layers: 6
+  dropout_p: 0.1
+  tie_weights: True
