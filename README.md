@@ -1,6 +1,6 @@
 # lm-training
 
-A skeleton for the training of transformer causal language models using HuggingFace libraries and models.  This library makes heavy use of [hydra](https://hydra.cc) for configuration management, so it is worth consulting that documentation as needed.  It also takes advantage of the HuggingFace ecosystem of libraries, so consulting the [transformer](https://huggingface.co/docs/transformers/index) and [tokenizer](https://huggingface.co/docs/tokenizers/index) package docs may also be beneficial.  Note that all language models supported by this package are ultimately [PyTorch modules](https://pytorch.org/docs/stable/generated/torch.nn.Module.html).
+A skeleton for the training of transformer _and recurrent_ causal language models using HuggingFace libraries and models.  This library makes heavy use of [hydra](https://hydra.cc) for configuration management, so it is worth consulting that documentation as needed.  It also takes advantage of the HuggingFace ecosystem of libraries, so consulting the [transformer](https://huggingface.co/docs/transformers/index) and [tokenizer](https://huggingface.co/docs/tokenizers/index) package docs may also be beneficial.  Note that all language models supported by this package are ultimately [PyTorch modules](https://pytorch.org/docs/stable/generated/torch.nn.Module.html).
 
 # How to Run
 
