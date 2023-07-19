@@ -7,7 +7,8 @@ from datasets import Dataset, DatasetDict
 import hydra
 from omegaconf import DictConfig, OmegaConf
 from transformers import DataCollatorForLanguageModeling, PreTrainedTokenizerFast
-
+import numpy as np
+    
 
 @hydra.main(config_path="../config", config_name="train-lm", version_base=None)
 def train_lm(cfg: DictConfig) -> None:
@@ -32,6 +33,12 @@ def train_lm(cfg: DictConfig) -> None:
         data_collator=data_collator,
         _convert_="object",
     )
+
+    model_parameters = filter(lambda p: p.requires_grad, trainer.model.parameters())
+    num_params = sum([np.prod(p.size()) for p in model_parameters])
+
+    print("Number of model params:", num_params)
+
     trainer.train()
     trainer.save_model(
         output_dir=f"{trainer.args.output_dir}/"
