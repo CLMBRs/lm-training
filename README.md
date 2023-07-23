@@ -18,7 +18,7 @@ n.b.: This tokenizer is for demonstration purposes only.  Because the corpus con
 
 To get over the problems noted above, we can also construct a tokenizer from the vocab file provided for the sample dataset (see `vocab.txt` once you download the dataset), using the script `scripts/vocab_file_to_tokenizer.py`.  Run the following command to generate and save a tokenizer JSON config to `models/tokenizer/word-level-ws-split.json`, whose vocabulary consists of the tokens in `data/wiki/vocab.txt`:
 
-```py
+```sh
 python scripts/vocab_file_to_tokenizer.py data/wiki/vocab.txt models/tokenizer/word-level-ws-split.json -p "<pad>" -u "<unk>" -s "<eos>"
 ```
 
