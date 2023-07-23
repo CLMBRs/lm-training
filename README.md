@@ -14,6 +14,16 @@ To train the tokenizer: `python train_tokenizer.py`.  This will save a tokenizer
 
 n.b.: This tokenizer is for demonstration purposes only.  Because the corpus contains special tokens e.g. \<unk\> and \<eos\> already, the trained tokenizer will parse these as '<', 'unk'/'eos', and '>'; also, it will fail to insert these tokens in new text.  This problem can be avoided by training the tokenizer on a corpus that does not already include special tokens.
 
+### Building a Tokenizer from a Vocab File
+
+To get over the problems noted above, we can also construct a tokenizer from the vocab file provided for the sample dataset (see `vocab.txt` once you download the dataset), using the script `scripts/vocab_file_to_tokenizer.py`.  Run the following command to generate and save a tokenizer JSON config to `models/tokenizer/word-level-ws-split.json`, whose vocabulary consists of the tokens in `data/wiki/vocab.txt`:
+
+```sh
+python scripts/vocab_file_to_tokenizer.py data/wiki/vocab.txt models/tokenizer/word-level-ws-split.json -p "<pad>" -u "<unk>" -s "<eos>"
+```
+
+This script is intended for use with corpora which are already tokenized, as it will not add any special tokens other than the unknown and padding tokens, nor will it do any other special pre/post-processing or normalization.  If running this script on your own vocab file, run the script with the `-h`/`--help` flag to see how to customize its behavior.
+
 ## Causal Language Model
 
 ### Transformer
