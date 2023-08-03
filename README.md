@@ -8,6 +8,18 @@ This project demonstrates training (i) a simple whitespace tokenizer and (ii) tw
 
 We will add more information on customizing configurations, building experiments, and things like that in the future.
 
+## Setting up the environment
+
+1. Create a fresh conda environment using `environment.yml`.  If you haven't done so for this project previously:
+    ```sh
+    conda env create -f environment.yml
+    ```
+    By default this will create a conda env whose name is indicated on the first line of the `environment.yml` file (presently, `lm-training`).  You can change this by adding the `-n` flag followed by the desired name of your environment.
+1. After the environment is created, whenever you want to work on this project, first activate the environment:
+    ```sh
+    conda activate lm-training
+    ```
+    
 ## Tokenizer
 
 To train the tokenizer: `python train_tokenizer.py`.  This will save a tokenizer to `models/tokenizer/word-level.json`.  The main configuration used for this script is `config/train-tokenizer.yaml`.
