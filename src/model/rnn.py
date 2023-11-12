@@ -12,6 +12,7 @@ from strenum import UppercaseStrEnum
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from transformers import PreTrainedModel
 from transformers.modeling_outputs import ModelOutput
 
 
@@ -66,8 +67,8 @@ class CausalRNNModelOutput(ModelOutput):
     last_state: Optional[tuple[torch.Tensor]] = None
 
 
-class RNNForLanguageModeling(nn.Module):
-    """RNN with optional dropout for use with a language modeling objective.
+class RNNConfig(PretrainedConfig):
+    """Config for RNN with optional dropout for use with a language modeling objective.
 
     Consists of three components:
         * Embedding layer
@@ -97,6 +98,7 @@ class RNNForLanguageModeling(nn.Module):
         output_last_state: bool = False,
         embedding_kwargs: dict[str, Any] = {},
         rnn_kwargs: dict[str, Any] = {},
+        **kwargs,
     ):
         """Constructor.
 
@@ -223,16 +225,16 @@ class RNNForLanguageModeling(nn.Module):
                 * If `rnn_type` is not a valid `RNNType` or string that can be converted
                 to a valid `RNNType`: "RNN", "LSTM," or "GRU".
         """
-        super().__init__()
+        super().__init__(**kwargs)
 
         # double linear layer input dimensions if bidirectional
         lm_in_features = hidden_dim * (1 + bidirectional)
-        if tie_weights and (embedding_dim != lm_in_features) :
+        if tie_weights and (embedding_dim != lm_in_features):
             raise ValueError(
                 f"embedding_dim is not {'double' if bidirectional else 'equal to'} "
                 "hidden_dim, cannot tie weights."
             )
-        
+
         self.vocab_size = vocab_size
         self.embedding_dim = embedding_dim
         self.hidden_dim = hidden_dim
@@ -266,45 +268,89 @@ class RNNForLanguageModeling(nn.Module):
         self.output_recurrent_outputs = output_recurrent_outputs
         self.output_last_state = output_last_state
 
+
+# class RNNForLanguageModeling(nn.Module):
+class RNNForLanguageModeling(PreTrainedModel):
+    """RNN with optional dropout for use with a language modeling objective.
+
+    Consists of three components:
+        * Embedding layer
+        * Recurrent layer- choice of vanilla (Elman) RNN, LSTM, or GRU
+        * Language modeling head- linear layer with bias
+
+    Primarily intended for use in conjunction with a HuggingFace `Trainer` instance, or
+    at least with a `transformers.tokenization_utils.PreTrainedTokenizer` instance.
+    See the method documentation of `forward` for more information on how to use this
+    without a `PreTrainedTokenizer` or `Trainer`.
+
+    Class attributes:
+        config_class:
+            A subclass of [`PretrainedConfig`] to use as configuration class for this
+            model architecture.
+        base_model_prefix:
+            A string indicating the attribute associated to the base model in derived
+            classes of the same architecture adding modules on top of the base model.
+            Technically unnecesary at this juncture but may be necessary in future if
+            we make RNNForLanguageModeling a subclass of a new class RNN which
+            subclasses from PreTrainedModel (for example, if we also wanted to implement
+            a RNNForSequenceClassification or other RNN models)
+        _tied_weights_keys:
+            A list of `state_dict` keys that are potentially tied to another key in the
+            state_dict. I think only one set of the copies needs to be mentioned below?
+            hence omitting embedding.weight. If this breaks save_pretrained, may need
+            to revisit/revise.
+    """
+
+    config_class = RNNConfig
+    base_model_prefix = "model"
+    _tied_weights_keys = ["lm_head.weight"]
+
+    def __init__(self, config: RNNConfig):
+        super().__init__(config)
+
         self.embedding = nn.Embedding(
             num_embeddings=vocab_size, embedding_dim=embedding_dim, **embedding_kwargs
         )
 
         self.recurrent: nn.RNNBase = getattr(nn, RNNType(rnn_type.upper()))(
-            input_size=self.embedding_dim,
-            hidden_size=self.hidden_dim,
-            num_layers=self.num_layers,
+            input_size=self.config.embedding_dim,
+            hidden_size=self.config.hidden_dim,
+            num_layers=self.config.num_layers,
             batch_first=True,
-            dropout=self.dropout_p,
-            bidirectional=self.bidirectional,
+            dropout=self.config.dropout_p,
+            bidirectional=self.config.bidirectional,
             **rnn_kwargs,
         )
 
-        self.dropout = nn.Dropout(p=self.dropout_p)
+        self.dropout = nn.Dropout(p=self.config.dropout_p)
 
         self.lm_head = nn.Linear(
-            in_features=self.lm_in_features,
-            out_features=self.vocab_size,
+            in_features=self.config.lm_in_features,
+            out_features=self.config.vocab_size,
         )
 
-        if self.tie_weights:
+        if self.config.tie_weights:
             self.embedding.weight = self.lm_head.weight
 
         self.init_weights()
 
     def init_weights(self):
-        self.embedding.weight.data.uniform_(-self.emb_init_range, self.emb_init_range)
+        self.embedding.weight.data.uniform_(
+            -self.config.emb_init_range, self.config.emb_init_range
+        )
 
-        self.lm_head.weight.data.uniform_(-self.lin_init_range, self.lin_init_range)
+        self.lm_head.weight.data.uniform_(
+            -self.config.lin_init_range, self.config.lin_init_range
+        )
         self.lm_head.bias.data.zero_()
 
-        for i in range(self.num_layers):
+        for i in range(self.config.num_layers):
             self.recurrent.all_weights[i][0] = torch.FloatTensor(
-                self.embedding_dim, self.hidden_dim
-            ).uniform_(-self.recur_init_range, self.recur_init_range)
+                self.config.embedding_dim, self.config.hidden_dim
+            ).uniform_(-self.config.recur_init_range, self.config.recur_init_range)
             self.recurrent.all_weights[i][1] = torch.FloatTensor(
-                self.hidden_dim, self.hidden_dim
-            ).uniform_(-self.recur_init_range, self.recur_init_range)
+                self.config.hidden_dim, self.config.hidden_dim
+            ).uniform_(-self.config.recur_init_range, self.config.recur_init_range)
 
     def forward(
         self,
@@ -442,7 +488,7 @@ class RNNForLanguageModeling(nn.Module):
             # reshape inputs (logits) and targets (labels) to
             # (batch_size*sequence_length-1, vocab_size)
             loss = F.cross_entropy(  # shape: (1,)
-                shift_logits.view(-1, self.vocab_size), shift_labels.view(-1)
+                shift_logits.view(-1, self.config.vocab_size), shift_labels.view(-1)
             )
 
         return CausalRNNModelOutput(
