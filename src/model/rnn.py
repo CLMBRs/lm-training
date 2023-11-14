@@ -12,7 +12,7 @@ from strenum import UppercaseStrEnum
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from transformers import PreTrainedModel
+from transformers import PretrainedConfig, PreTrainedModel
 from transformers.modeling_outputs import ModelOutput
 
 
@@ -81,13 +81,15 @@ class RNNConfig(PretrainedConfig):
     without a `PreTrainedTokenizer` or `Trainer`.
     """
 
+    model_type = "rnn"
+
     def __init__(
         self,
-        rnn_type: RNNType,
-        vocab_size: int,
-        embedding_dim: int,
-        hidden_dim: int,
-        num_layers: int,
+        rnn_type: RNNType = RNNType.RNN,
+        vocab_size: int = 50002,
+        embedding_dim: int = 1024,
+        hidden_dim: int = 1024,
+        num_layers: int = 2,
         dropout_p: float = 0.0,
         tie_weights: bool = False,
         bidirectional: bool = False,
@@ -103,7 +105,7 @@ class RNNConfig(PretrainedConfig):
         """Constructor.
 
         Args:
-            rnn_type ("RNN", "LSTM", or "GRU"):
+            rnn_type ("RNN", "LSTM", or "GRU", defaults to "RNN"):
                 Determines the model architecture to use in the recurrent component of
                 the model. Choose from:
                     * RNN - recurrent layers are a `nn.RNN` instance
@@ -117,15 +119,23 @@ class RNNConfig(PretrainedConfig):
             vocab_size (`int`):
                 Size of the vocabulary; determines dimensions of embedding and linear
                 (output) layers.
+
+                Default: 50002.
             embedding_dim (`int`):
                 Embedding dimension; determines dimensions of embedding and recurrent
                 layers.
+
+                Default: 1024.
             hidden_dim (`int`):
                 Hidden dimension; determines dimensions of recurrent and linear (output)
                 layers. For bidirectional RNN's, the linear layer's input feature
                 dimension is twice the `hidden_dim`; otherwise, they are equal.
+
+                Default: 1024.
             num_layers (`int`):
                 Number of recurrent layers.
+
+                Default: 2.
             dropout_p (`int`, *optional*):
                 Percentage dropout in the recurrent layers and from the recurrent layer
                 to the final linear layer.
@@ -227,6 +237,8 @@ class RNNConfig(PretrainedConfig):
         """
         super().__init__(**kwargs)
 
+        self.rnn_type = rnn_type
+
         # double linear layer input dimensions if bidirectional
         lm_in_features = hidden_dim * (1 + bidirectional)
         if tie_weights and (embedding_dim != lm_in_features):
@@ -267,6 +279,8 @@ class RNNConfig(PretrainedConfig):
 
         self.output_recurrent_outputs = output_recurrent_outputs
         self.output_last_state = output_last_state
+        self.embedding_kwargs = embedding_kwargs
+        self.rnn_kwargs = rnn_kwargs
 
 
 # class RNNForLanguageModeling(nn.Module):
@@ -309,17 +323,19 @@ class RNNForLanguageModeling(PreTrainedModel):
         super().__init__(config)
 
         self.embedding = nn.Embedding(
-            num_embeddings=vocab_size, embedding_dim=embedding_dim, **embedding_kwargs
+            num_embeddings=self.config.vocab_size,
+            embedding_dim=self.config.embedding_dim,
+            **self.config.embedding_kwargs,
         )
 
-        self.recurrent: nn.RNNBase = getattr(nn, RNNType(rnn_type.upper()))(
+        self.recurrent: nn.RNNBase = getattr(nn, RNNType(self.config.rnn_type.upper()))(
             input_size=self.config.embedding_dim,
             hidden_size=self.config.hidden_dim,
             num_layers=self.config.num_layers,
             batch_first=True,
             dropout=self.config.dropout_p,
             bidirectional=self.config.bidirectional,
-            **rnn_kwargs,
+            **self.config.rnn_kwargs,
         )
 
         self.dropout = nn.Dropout(p=self.config.dropout_p)
@@ -434,13 +450,13 @@ class RNNForLanguageModeling(PreTrainedModel):
         output_recurrent_outputs = (
             output_recurrent_outputs
             if output_recurrent_outputs is not None
-            else self.output_recurrent_outputs
+            else self.config.output_recurrent_outputs
         )
 
         output_last_state = (
             output_last_state
             if output_last_state is not None
-            else self.output_last_state
+            else self.config.output_last_state
         )
 
         # retrieve input_ids and inputs_embeds

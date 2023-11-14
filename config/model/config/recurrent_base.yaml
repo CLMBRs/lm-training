@@ -1,9 +1,8 @@
 defaults:
   - _self_
-_target_: model.RNNForLanguageModeling
-rnn_type: LSTM
+_target_: model.RNNConfig
+rnn_type: ???
 vocab_size: ???
 embedding_dim: ???
 hidden_dim: ???
 num_layers: ???
-dropout_p: ???
