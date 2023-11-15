@@ -283,7 +283,6 @@ class RNNConfig(PretrainedConfig):
         self.rnn_kwargs = rnn_kwargs
 
 
-# class RNNForLanguageModeling(nn.Module):
 class RNNForLanguageModeling(PreTrainedModel):
     """RNN with optional dropout for use with a language modeling objective.
 
