@@ -1,0 +1,4 @@
+defaults:
+  - recurrent_base
+  - _self_
+rnn_type: RNN

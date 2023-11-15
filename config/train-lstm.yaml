@@ -1,11 +1,15 @@
 defaults:
-  - train-lm
-  - model: LSTM
+  - train-from-config
+  - override model/config: lstm
   - _self_
 model:
-  vocab_size: 50002
-  embedding_dim: 1024
-  hidden_dim: 1024
-  num_layers: 2
-  dropout_p: 0.1
-  tie_weights: True
+  config:
+      # it would be nice to infer this automatically from a tokenizer vocab, but doing so
+      # would require instantiating the tokenizer, which is not possible in the config
+      # in other words, would lose the maximal dependency injection that we currently have
+      vocab_size: 50002
+      embedding_dim: 1024
+      hidden_dim: 1024
+      num_layers: 2
+      dropout_p: 0.1
+      tie_weights: True
