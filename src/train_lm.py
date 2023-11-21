@@ -3,18 +3,23 @@
 For examples of how to run, see README.md.
 """
 
+import logging
+
 from datasets import Dataset, DatasetDict
 import hydra
 from omegaconf import DictConfig, OmegaConf
 from transformers import DataCollatorForLanguageModeling, PreTrainedTokenizerFast
 import numpy as np
 
+log = logging.getLogger(__name__)
+
 # resolver to split a string x on a character y and return the (z-1)th element
 OmegaConf.register_new_resolver("split", lambda x, y, z: x.split(y)[z])
 
+
 @hydra.main(config_path="../config", config_name="train-lm", version_base=None)
 def train_lm(cfg: DictConfig) -> None:
-    print(OmegaConf.to_yaml(cfg))
+    log.info(f"Config:\n{OmegaConf.to_yaml(cfg)}")
     ds_dict: DatasetDict = hydra.utils.instantiate(cfg.dataset, _convert_="object")
     tokenizer: PreTrainedTokenizerFast = hydra.utils.instantiate(cfg.tokenizer)
     # tokenize the datasets!
@@ -39,7 +44,7 @@ def train_lm(cfg: DictConfig) -> None:
     model_parameters = filter(lambda p: p.requires_grad, trainer.model.parameters())
     num_params = sum([np.prod(p.size()) for p in model_parameters])
 
-    print("Number of model params:", num_params)
+    log.info(f"Number of model params: {num_params}")
 
     trainer.train()
     trainer.save_model(
