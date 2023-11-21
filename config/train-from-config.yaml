@@ -1,0 +1,10 @@
+defaults:
+  - train-lm
+  - model: from_config
+  - _self_
+model:
+  config:
+      # it would be nice to infer this automatically from a tokenizer vocab, but doing so
+      # would require instantiating the tokenizer, which is not possible in the config
+      # in other words, would lose the maximal dependency injection that we currently have
+      vocab_size: 50002
