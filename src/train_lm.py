@@ -8,7 +8,9 @@ import hydra
 from omegaconf import DictConfig, OmegaConf
 from transformers import DataCollatorForLanguageModeling, PreTrainedTokenizerFast
 import numpy as np
-    
+
+# resolver to split a string x on a character y and return the (z-1)th element
+OmegaConf.register_new_resolver("split", lambda x, y, z: x.split(y)[z])
 
 @hydra.main(config_path="../config", config_name="train-lm", version_base=None)
 def train_lm(cfg: DictConfig) -> None:
