@@ -2,4 +2,4 @@ base_dir: null
 splits:
   train: ${data.base_dir}/train.txt
   valid: ${data.base_dir}/valid.txt
-  test: ${data.base_dir}/test.txt
+  # test: ${data.base_dir}/test.txt
