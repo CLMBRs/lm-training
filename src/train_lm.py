@@ -19,7 +19,6 @@ from transformers import (
 from transformers.integrations import is_wandb_available
 from transformers.trainer_utils import get_last_checkpoint
 import numpy as np
-import wandb
 
 log = logging.getLogger(__name__)
 
@@ -72,11 +71,14 @@ def train_lm(cfg: DictConfig) -> None:
     log.info(f"Config:\n{OmegaConf.to_yaml(cfg)}")
     ds_dict: DatasetDict = hydra.utils.instantiate(cfg.dataset, _convert_="object")
     tokenizer: PreTrainedTokenizerFast = hydra.utils.instantiate(cfg.tokenizer)
-    # tokenize the datasets!
-    ds_dict = ds_dict.map(
-        lambda examples: tokenizer(examples[cfg.text_field], padding=True),
-        batched=True,
-    )
+    if not cfg.data.get("is_tokenized", False):
+        log.info("Tokenizing dataset.")
+        ds_dict = ds_dict.map(
+            lambda examples: tokenizer(examples[cfg.text_field], padding=True),
+            batched=True,
+        )
+    else:
+        log.info("Dataset is already tokenized; proceeding.")
     # get train and val splits to feed to trainer
     train_ds: Dataset = ds_dict[cfg.train_split]
     eval_ds: Dataset = ds_dict[cfg.eval_split]
@@ -105,6 +107,7 @@ def train_lm(cfg: DictConfig) -> None:
 
         cfg.trainer.args.update(
             {
+                "dataloader_num_workers": training_args_tmp.dataloader_num_workers,
                 "max_steps": training_args_tmp.max_steps,
                 "num_train_epochs": training_args_tmp.num_train_epochs,
                 "output_dir": training_args_tmp.output_dir,
@@ -133,8 +136,16 @@ def train_lm(cfg: DictConfig) -> None:
         #         * (len(train_ds) / cfg.trainer.args.get(per_device_train_batch_size,)
         #     ),
         # )
-        train_ds = train_ds.to_iterable_dataset()
-        eval_ds = eval_ds.to_iterable_dataset()
+        train_shards = (
+            cfg.get("train_shards_per_worker", 8)
+            * cfg.trainer.args.dataloader_num_workers
+        )
+        eval_shards = (
+            cfg.get("eval_shards_per_worker", 8)
+            * cfg.trainer.args.dataloader_num_workers
+        )
+        train_ds = train_ds.to_iterable_dataset(num_shards=train_shards)
+        eval_ds = eval_ds.to_iterable_dataset(num_shards=eval_shards)
 
     # data collator will generate labels for language modeling
     # which will tell the model to return a loss, as needed for trainer
@@ -158,6 +169,8 @@ def train_lm(cfg: DictConfig) -> None:
                 )
                 and "wandb" in cfg.trainer.args.report_to
             ) or cfg.trainer.args.report_to == "wandb":
+                import wandb
+
                 wandb_run_id_file = os.path.join(
                     cfg.trainer.args.output_dir, ".wandb_run_id"
                 )
