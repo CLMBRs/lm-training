@@ -29,6 +29,11 @@ training_args:
   eval_steps: 10
   logging_steps: 10
   log_level: info
+  dataloader_num_workers: 8
+  fp16: true
+use_iterable_dataset: true
+train_shards_per_worker: 32
+eval_shards_per_worker: 8
 trainer:
   _target_: transformers.Trainer
   args: ${training_args}

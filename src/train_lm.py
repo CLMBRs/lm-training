@@ -125,17 +125,6 @@ def train_lm(cfg: DictConfig) -> None:
                 cfg.trainer.args.num_train_epochs
                 * (len(train_ds) / cfg.trainer.args.per_device_train_batch_size)
             )
-            # training_args_tmp.max_steps = int(
-            #     training_args_tmp.num_train_epochs
-            #     * (len(train_ds) / training_args_tmp.per_device_train_batch_size)
-            # )
-        # cfg.trainer.args["max_steps"] = cfg.trainer.args.get(
-        #     "max_steps",
-        #     int(
-        #         cfg.trainer.args.get("num_train_epochs", 3.0)
-        #         * (len(train_ds) / cfg.trainer.args.get(per_device_train_batch_size,)
-        #     ),
-        # )
         train_shards = (
             cfg.get("train_shards_per_worker", 8)
             * cfg.trainer.args.dataloader_num_workers
@@ -196,6 +185,8 @@ def train_lm(cfg: DictConfig) -> None:
                 )
         else:
             resume_from_checkpoint = False
+
+        # Now, the core training setup
 
         trainer = hydra.utils.instantiate(
             cfg.trainer,
