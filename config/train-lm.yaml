@@ -16,6 +16,9 @@ tokenizer:
   eos_token: "<eos>"
   # pad token comes from how we trained the tokenizer; see tokenizer/word-level.yaml
   pad_token: "<pad>"
+  # NB: we could set model_max_length via interpolation (e.g. ${model.config.max_position_embeddings}),
+  # but not every `model` will have that path necessarily
+  model_max_length: 512
 text_field: "text"
 train_split: "train"
 eval_split: "valid"
