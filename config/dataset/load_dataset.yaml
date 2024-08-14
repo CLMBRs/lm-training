@@ -2,3 +2,5 @@ defaults:
   - _self_
 _target_: datasets.load_dataset
 path: ???
+keep_in_memory: true
+data_files: ${data.splits}

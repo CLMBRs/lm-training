@@ -13,6 +13,9 @@ dependencies:
   - sentencepiece=0.* # can omit if sentencepiece models (e.g. ALBERT, XLMRoberta, T5) are not needed
   - hydra-core=1.3.*
   - strenum
+  # Loggers below; comment out/delete any that are not needed
+  - neptune=1.*
+  - tensorboard=2.*
   - wandb=0.*
   # Uncomment following packages if audio processing is needed:
   # - librosa=0.*

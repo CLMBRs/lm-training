@@ -7,8 +7,8 @@ defaults:
 seed: 42
 data:
   base_dir: ../data/wiki
-dataset:
-  data_files: ${data.splits}
+# dataset:
+#   data_files: ${data.splits}
 tokenizer:
   tokenizer_file: ../models/tokenizer/word-level.json
   # these first two special tokens come from the data
