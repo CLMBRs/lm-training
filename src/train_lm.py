@@ -74,7 +74,9 @@ def train_lm(cfg: DictConfig) -> None:
     if not cfg.data.get("is_tokenized", False):
         log.info("Tokenizing dataset.")
         ds_dict = ds_dict.map(
-            lambda examples: tokenizer(examples[cfg.text_field], padding=True),
+            lambda examples: tokenizer(
+                examples[cfg.text_field], padding=True, truncation=True
+            ),
             batched=True,
         )
     else:
