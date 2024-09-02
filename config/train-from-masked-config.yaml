@@ -1,7 +1,7 @@
 defaults:
   - train-lm
-  - model: from_config
-  - collator: causal_modeling
+  - model: from_masked_config
+  - collator: masked_modeling
   - _self_
 model:
   config:
