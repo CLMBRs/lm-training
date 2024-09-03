@@ -1,0 +1,10 @@
+_target_: transformers.DebertaV2Config
+intermediate_size: 6144 
+hidden_size: 1536
+num_attention_heads: 24
+num_hidden_layers: 24
+max_position_embeddings: 512
+# it would be nice to infer this automatically from a tokenizer vocab, but doing so
+# would require instantiating the tokenizer, which is not possible in the config
+# in other words, would lose the maximal dependency injection that we currently have
+vocab_size: 50002 #128100
