@@ -10,7 +10,7 @@ data:
 # dataset:
 #   data_files: ${data.splits}
 tokenizer:
-  tokenizer_file: ../models/tokenizer/word-level.json
+  tokenizer_file: models/tokenizer/word-level.json
   # these first two special tokens come from the data
   unk_token: "<unk>"
   eos_token: "<eos>"

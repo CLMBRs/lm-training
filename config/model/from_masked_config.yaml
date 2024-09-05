@@ -1,0 +1,5 @@
+defaults:
+  - config: from_pretrained
+  - _self_
+# change the _target_ if not for causal LM
+_target_: transformers.AutoModelForMaskedLM.from_config

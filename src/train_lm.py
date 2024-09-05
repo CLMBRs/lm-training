@@ -140,8 +140,12 @@ def train_lm(cfg: DictConfig) -> None:
 
     # data collator will generate labels for language modeling
     # which will tell the model to return a loss, as needed for trainer
-    data_collator = DataCollatorForLanguageModeling(tokenizer=tokenizer, mlm=False)
-
+    # data_collator = DataCollatorForLanguageModeling(tokenizer=tokenizer, mlm=False)
+    collator_config = cfg.collator
+    collator_config_with_tokenizer = {**collator_config, 'tokenizer': tokenizer}
+    data_collator = hydra.utils.instantiate(collator_config_with_tokenizer)
+    print(f"Data Collator settings: {data_collator}")
+    
     with ExitStack() as stack:
         if "dynamic_resume" in cfg and cfg.dynamic_resume:
             log.info("Dynamic resume enabled.")

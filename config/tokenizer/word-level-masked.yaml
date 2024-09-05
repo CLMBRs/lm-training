@@ -1,0 +1,9 @@
+defaults:
+  - word-level  # Inherit from word-level.yaml
+
+trainer:
+  special_tokens: # Extend the existing list of special tokens
+    - ${tokenizer.model.unk_token}
+    - "<eos>"
+    - "<pad>"
+    - "<MASK>"

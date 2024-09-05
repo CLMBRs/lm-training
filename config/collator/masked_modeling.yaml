@@ -1,0 +1,3 @@
+_target_: transformers.DataCollatorForLanguageModeling
+mlm: True
+mlm_probability: 0.15

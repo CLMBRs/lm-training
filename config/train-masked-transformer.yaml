@@ -1,0 +1,4 @@
+defaults:
+  - train-from-masked-config
+  - override model/config: deberta
+  - _self_
