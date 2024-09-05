@@ -1,12 +1,8 @@
-model:
-  _target_: tokenizers.models.WordLevel
-  unk_token: "<unk>"
-pre_tokenizer:
-  _target_: tokenizers.pre_tokenizers.Whitespace
+defaults:
+  - word-level  # Inherit from word-level.yaml
+
 trainer:
-  _target_: tokenizers.trainers.WordLevelTrainer
-  min_frequency: 1
-  special_tokens:
+  special_tokens: # Extend the existing list of special tokens
     - ${tokenizer.model.unk_token}
     - "<eos>"
     - "<pad>"
