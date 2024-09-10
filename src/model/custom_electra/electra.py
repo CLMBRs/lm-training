@@ -1,11 +1,7 @@
 from typing import Optional
 import torch
-import transformers
-from transformers import ElectraForMaskedLM, ElectraForPreTraining 
-from transformers import AutoConfig, PretrainedConfig, PreTrainedModel, AutoModelForMaskedLM
-#from transformers.tokenization_utils import PretrainedTokenizerFast
-from transformers.models.electra.modeling_electra import ElectraForPreTrainingOutput
-
+from transformers import AutoConfig, PretrainedConfig, PreTrainedModel, AutoModelForMaskedLM, AutoModelForTokenClassification
+from transformers.modeling_outputs import TokenClassifierOutput
 
 
 class CustomElectraConfig(PretrainedConfig):
@@ -29,10 +25,7 @@ class CustomElectraConfig(PretrainedConfig):
         self.discriminator_lambda_loss= discriminator_lambda_loss
         self._name_or_path= pretrained_model_name_or_path
         
-        #self._name_or_path= CustomElectraConfig 
-# suggest to subclass PreTrainedModel, this has several advantages to using nn.Module
-# you can take advantage of existing functions and ensure it will work with Trainer
-# https://discuss.huggingface.co/t/resources-for-using-custom-models-with-trainer/4151
+
 class CustomElectraModel(PreTrainedModel):
 
     # loss weights are default from paper
