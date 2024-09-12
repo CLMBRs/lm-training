@@ -6,4 +6,4 @@ defaults:
 data:
   base_dir: ../data/wiki
 
-output_file: models/tokenizer/word-level-masked-classifier.json
+output_file: models/tokenizer/word-level-masked-cls-classifier.json
