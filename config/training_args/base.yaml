@@ -8,6 +8,6 @@ output_dir: ${hydra:runtime.output_dir}/checkpoints
 num_train_epochs: 3.0
 per_device_train_batch_size: 8
 per_device_eval_batch_size: 8
-evaluation_strategy: steps
+eval_strategy: steps
 seed: 42
 load_best_model_at_end: true

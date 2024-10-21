@@ -1,0 +1,9 @@
+defaults:
+  - tokenizer: word-level-masked-classifier
+  - data: raw
+  - _self_
+
+data:
+  base_dir: ../data/wiki
+
+output_file: models/tokenizer/word-level-masked-cls-classifier.json

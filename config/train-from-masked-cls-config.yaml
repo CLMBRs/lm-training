@@ -1,0 +1,14 @@
+defaults:
+  - train-from-masked-config
+  - _self_
+
+# Override the tokenizer configuration from train-lm.yaml
+tokenizer:
+  tokenizer_file: models/tokenizer/word-level-masked-cls.json  # New tokenizer file path
+  unk_token: "<unk>"   # New unknown token, if you need to change it
+  eos_token: "<eos>"   # New end-of-sequence token, if you need to change it
+  pad_token: "<pad>"  # New padding token, if you need to change it
+  mask_token: "<MASK>"
+  sep_token: "<SEP>"
+  cls_token: "<CLS>"
+  
