@@ -70,7 +70,6 @@ def train_lm(cfg: DictConfig) -> None:
     """
     log.info(f"Config:\n{OmegaConf.to_yaml(cfg)}")
     ds_dict: DatasetDict = hydra.utils.instantiate(cfg.dataset, _convert_="object")
-    ds_dict = ds_dict.remove_columns("text")
     tokenizer: PreTrainedTokenizerFast = hydra.utils.instantiate(cfg.tokenizer)
     if not cfg.data.get("is_tokenized", False):
         log.info("Tokenizing dataset.")
