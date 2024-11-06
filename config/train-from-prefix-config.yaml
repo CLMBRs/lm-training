@@ -1,0 +1,25 @@
+defaults:
+  - train-lm
+  - model: from_config
+  - collator: prefix_modeling
+  - _self_
+
+model:
+  config:
+      # it would be nice to infer this automatically from a tokenizer vocab, but doing so
+      # would require instantiating the tokenizer, which is not possible in the config
+      # in other words, would lose the maximal dependency injection that we currently have
+      vocab_size: 50002
+
+# Override the tokenizer configuration from train-lm.yaml
+tokenizer:
+  tokenizer_file: models/tokenizer/word-level-prefix.json  # New tokenizer file path
+  unk_token: "<unk>"   # New unknown token, if you need to change it
+  eos_token: "<eos>"   # New end-of-sequence token, if you need to change it
+  pad_token: "<pad>"   # New padding token, if you need to change it
+  sep_token: "<sep>"   # New separator token, if you need to change it
+
+# Override the collator configurtion from prefix_modeling.yaml
+# Assumes the data to be formatted as "<input_sequence> <sep_token> <output_sequence>"
+collator:
+  response_template: ${tokenizer.sep_token}

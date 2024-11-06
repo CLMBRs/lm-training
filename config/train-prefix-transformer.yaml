@@ -1,0 +1,4 @@
+defaults:
+  - train-from-prefix-config
+  - override model/config: causal-small
+  - _self_
