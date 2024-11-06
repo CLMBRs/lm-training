@@ -199,7 +199,7 @@ def train_lm(cfg: DictConfig) -> None:
             # args=training_args,
             train_dataset=train_ds,
             eval_dataset=eval_ds,
-            data_collator=data_collator,
+            data_collator=collator_config_with_tokenizer,
             _convert_="object",
         )
 
