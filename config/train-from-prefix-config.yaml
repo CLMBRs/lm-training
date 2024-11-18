@@ -19,7 +19,6 @@ tokenizer:
   pad_token: "<pad>"   # New padding token, if you need to change it
   sep_token: "<sep>"   # New separator token, if you need to change it
 
-# Override the collator configurtion from prefix_modeling.yaml
-# Assumes the data to be formatted as "<input_sequence> <sep_token> <output_sequence>"
-collator:
-  response_template: ${tokenizer.sep_token}
+# Note that the collator configurtion from prefix_modeling.yaml assumes the 
+# data to be formatted as "<input_sequence> <sep_token> <output_sequence>".
+# To modify the response_template, override the collator response_template.
