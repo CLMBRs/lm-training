@@ -143,8 +143,7 @@ def train_lm(cfg: DictConfig) -> None:
     # data_collator = DataCollatorForLanguageModeling(tokenizer=tokenizer, mlm=False)
     collator_config = cfg.collator
     collator_config_with_tokenizer = {**collator_config, 'tokenizer': tokenizer}
-    data_collator = hydra.utils.instantiate(collator_config_with_tokenizer)
-    print(f"Data Collator settings: {data_collator}")
+    print(f"Data Collator settings: {collator_config_with_tokenizer}")
     
     with ExitStack() as stack:
         if "dynamic_resume" in cfg and cfg.dynamic_resume:
@@ -199,7 +198,7 @@ def train_lm(cfg: DictConfig) -> None:
             # args=training_args,
             train_dataset=train_ds,
             eval_dataset=eval_ds,
-            data_collator=data_collator,
+            data_collator=collator_config_with_tokenizer,
             _convert_="object",
         )
 
