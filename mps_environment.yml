@@ -1,0 +1,18 @@
+name: mps-lm-training
+channels:
+  - pytorch
+  - defaults
+dependencies:
+  - python=3.10.*
+  - pip
+  - pip:
+      - black
+      - mypy
+      - torch==2.*
+      - transformers==4.*
+      - accelerate==1.0.*
+      - evaluate==0.4.*
+      - jiwer==3.*
+      - sentencepiece==0.*  # Omit if not working with models requiring SentencePiece
+      - hydra-core==1.3.*
+      - strenum
