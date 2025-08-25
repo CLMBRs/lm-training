@@ -1,0 +1,9 @@
+defaults:
+  - _self_
+_target_: brainscore_custom.load_brainscore_dataset
+path: ???
+keep_in_memory: true
+name: ???
+gen_eval: true
+eval_split: ${eval_split}
+seed: ${seed}

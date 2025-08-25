@@ -1,0 +1,33 @@
+defaults:
+  - /train-causal-transformer
+  - _self_
+  - override dataset: load_brainscore_dataset
+training_args:
+  hub_strategy: all_checkpoints
+  hub_always_push: true
+  num_train_epochs: 40
+  max_steps: -1
+  per_device_train_batch_size: 64
+  per_device_eval_batch_size: 64
+  load_best_model_at_end: true
+  eval_strategy: "epoch"
+  save_strategy: "epoch"
+  logging_strategy: "steps"
+  logging_first_step: true
+  logging_steps: 512
+  ignore_data_skip: true
+  dataloader_num_workers: 16
+  fp16: true
+dynamic_resume: true
+use_iterable_dataset: true
+train_shards_per_worker: 32
+eval_shards_per_worker: 8
+dataset:
+  path: wikimedia/wikipedia
+  name: 20231101.en
+tokenizer:
+  tokenizer_file: models/tokenizer/brainscore-bpe.json  # New tokenizer file path
+pack:
+  packing: true
+  block_len: ${tokenizer.model_max_length}
+  max_len: 100_000_000

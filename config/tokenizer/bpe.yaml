@@ -1,0 +1,13 @@
+model:
+  _target_: tokenizers.models.BPE
+  unk_token: "<unk>"
+pre_tokenizer:
+  _target_: tokenizers.pre_tokenizers.Whitespace
+trainer:
+  _target_: tokenizers.trainers.BpeTrainer
+  special_tokens:
+    - ${tokenizer.model.unk_token}
+    - "<eos>"
+    - "<pad>"
+  vocab_size: ${model.config.vocab_size}
+  min_frequency: 1

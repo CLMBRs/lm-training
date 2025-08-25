@@ -14,8 +14,13 @@ def train_tokenizer(cfg: DictConfig) -> None:
     if "pre_tokenizer" in cfg.tokenizer:
         tokenizer.pre_tokenizer = hydra.utils.instantiate(cfg.tokenizer.pre_tokenizer)
     trainer = hydra.utils.instantiate(cfg.tokenizer.trainer, _convert_="object")
-    # pass raw text files (splits) to the trainer
-    tokenizer.train([cfg.data.splits[split] for split in cfg.data.splits], trainer)
+    # If there is an iterator provided, use that
+    if "iterator" in cfg.data:
+        iterator = hydra.utils.instantiate(cfg.data.iterator)
+        tokenizer.train_from_iterator(iterator, trainer)
+    else:
+        # pass raw text files (splits) to the trainer
+        tokenizer.train([cfg.data.splits[split] for split in cfg.data.splits], trainer)
 
     os.makedirs(os.path.dirname(cfg.output_file), exist_ok=True)
     tokenizer.save(cfg.output_file)

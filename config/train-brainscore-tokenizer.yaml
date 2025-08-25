@@ -1,0 +1,16 @@
+defaults:
+  - tokenizer: bpe
+  - data: from_dataset
+  - _self_
+
+output_file: models/tokenizer/brainscore-bpe.json
+
+data:
+  iterator:
+    dataset:
+      path: wikimedia/wikipedia
+      name: 20231101.en
+
+model:
+  config:
+    vocab_size: 50002

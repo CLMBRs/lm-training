@@ -10,15 +10,18 @@ import sys
 
 from datasets import Dataset, DatasetDict
 import hydra
-from omegaconf import DictConfig, OmegaConf, open_dict
+from omegaconf import DictConfig, ListConfig, OmegaConf, open_dict
 from transformers import (
     DataCollatorForLanguageModeling,
     PreTrainedTokenizerFast,
     TrainingArguments,
 )
+from tokenizers.trainers import BpeTrainer
 from transformers.integrations import is_wandb_available
 from transformers.trainer_utils import get_last_checkpoint
 import numpy as np
+
+import brainscore_custom
 
 log = logging.getLogger(__name__)
 
@@ -137,6 +140,11 @@ def train_lm(cfg: DictConfig) -> None:
         )
         train_ds = train_ds.to_iterable_dataset(num_shards=train_shards)
         eval_ds = eval_ds.to_iterable_dataset(num_shards=eval_shards)
+
+    if cfg.get("pack.packing", False):
+        packer = brainscore_custom.pack_dataset_gen(cfg.pack.block_len, cfg.pack.max_len, log)
+        train_ds = train_ds.map(packer, batched=True)
+        eval_ds = eval_ds.map(packer, batched=True)
 
     # data collator will generate labels for language modeling
     # which will tell the model to return a loss, as needed for trainer
