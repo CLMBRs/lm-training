@@ -41,12 +41,9 @@ def pack_dataset(dataset: Dataset, block_size: int, max_len: int, eos_token_id: 
                 break
             if len(curr_example) == block_size:
                 break
-            index = block_size - len(curr_example) - 1
-
+            index = block_size - len(curr_example)
             curr_example += dataset["input_ids"][example][:index]
             added_loop += 1
-
-        print(curr_example)
 
         if not force_exit:
             new_examples.append(curr_example)

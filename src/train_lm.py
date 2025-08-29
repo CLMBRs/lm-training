@@ -125,14 +125,14 @@ def train_lm(cfg: DictConfig) -> None:
         train_ds = brainscore_custom.pack_dataset(
             train_ds,
             cfg.pack.block_len,
-            cfg.pack.max_len,
+            cfg.pack.train_max_len,
             tokenizer.eos_token_id,
             log
         )
         eval_ds = brainscore_custom.pack_dataset(
             eval_ds,
             cfg.pack.block_len,
-            cfg.pack.max_len,
+            cfg.pack.eval_max_len,
             tokenizer.eos_token_id,
             log
         )

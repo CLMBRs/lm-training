@@ -30,4 +30,5 @@ tokenizer:
 pack:
   packing: true
   block_len: ${tokenizer.model_max_length}
-  max_len: 100_000_000
+  train_max_len: 100_000_000
+  eval_max_len: 100_000_000
