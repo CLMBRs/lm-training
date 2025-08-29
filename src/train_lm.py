@@ -78,7 +78,7 @@ def train_lm(cfg: DictConfig) -> None:
         log.info("Tokenizing dataset.")
         ds_dict = ds_dict.map(
             lambda examples: tokenizer(
-                examples[cfg.text_field], padding=True, truncation=True
+                examples[cfg.text_field]
             ),
             batched=True,
         )
@@ -121,6 +121,22 @@ def train_lm(cfg: DictConfig) -> None:
             }
         )
 
+    if "pack" in cfg and cfg.pack.get("packing", False):
+        train_ds = brainscore_custom.pack_dataset(
+            train_ds,
+            cfg.pack.block_len,
+            cfg.pack.max_len,
+            tokenizer.eos_token_id,
+            log
+        )
+        eval_ds = brainscore_custom.pack_dataset(
+            eval_ds,
+            cfg.pack.block_len,
+            cfg.pack.max_len,
+            tokenizer.eos_token_id,
+            log
+        )
+
     if cfg.get("use_iterable_dataset", False):
         log.info("Converting datasets to iterable.")
         # LR scheduler requires max_steps with iterable datasets because they lack
@@ -140,11 +156,6 @@ def train_lm(cfg: DictConfig) -> None:
         )
         train_ds = train_ds.to_iterable_dataset(num_shards=train_shards)
         eval_ds = eval_ds.to_iterable_dataset(num_shards=eval_shards)
-
-    if cfg.get("pack.packing", False):
-        packer = brainscore_custom.pack_dataset_gen(cfg.pack.block_len, cfg.pack.max_len, log)
-        train_ds = train_ds.map(packer, batched=True)
-        eval_ds = eval_ds.map(packer, batched=True)
 
     # data collator will generate labels for language modeling
     # which will tell the model to return a loss, as needed for trainer
