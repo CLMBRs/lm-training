@@ -1,0 +1,7 @@
+defaults:
+  - /train-brainscore-english
+  - override model/config: from-pretrained
+token_transfer: true
+model:
+  config:
+    pretrained_model_name_or_path: ???

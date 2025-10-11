@@ -23,10 +23,10 @@ use_iterable_dataset: true
 train_shards_per_worker: 32
 eval_shards_per_worker: 8
 dataset:
-  path: wikimedia/wikipedia
-  name: 20231101.en
+  path: ???
+  name: ???
 tokenizer:
-  tokenizer_file: models/tokenizer/brainscore-bpe.json  # New tokenizer file path
+  tokenizer_file: ???  # New tokenizer file path
 pack:
   packing: true
   block_len: ${tokenizer.model_max_length}

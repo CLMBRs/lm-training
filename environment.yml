@@ -16,7 +16,7 @@ dependencies:
   # Loggers below; comment out/delete any that are not needed
   # - neptune=1.*
   # - tensorboard=2.*
-  # - wandb=0.*
+  - wandb=0.*
   # Uncomment following packages if audio processing is needed:
   # - librosa=0.*
   # - pysoundfile>=0.12.1

@@ -10,13 +10,11 @@ import sys
 
 from datasets import Dataset, DatasetDict
 import hydra
-from omegaconf import DictConfig, ListConfig, OmegaConf, open_dict
+from omegaconf import DictConfig, OmegaConf, open_dict
 from transformers import (
-    DataCollatorForLanguageModeling,
     PreTrainedTokenizerFast,
     TrainingArguments,
 )
-from tokenizers.trainers import BpeTrainer
 from transformers.integrations import is_wandb_available
 from transformers.trainer_utils import get_last_checkpoint
 import numpy as np
@@ -222,6 +220,12 @@ def train_lm(cfg: DictConfig) -> None:
         )
 
         log.info(f"Final TrainingArguments:\n{trainer.args}")
+
+        if cfg.get("token_transfer", False):
+            for parameter in trainer.model.parameters():
+                parameter.requires_grad = False
+            for parameter in trainer.model.get_input_embeddings():
+                parameter.requires_grad = True
 
         model_parameters = filter(lambda p: p.requires_grad, trainer.model.parameters())
         num_params = sum([np.prod(p.size()) for p in model_parameters])
