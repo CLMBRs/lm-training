@@ -1,0 +1,8 @@
+defaults:
+  - /train-brainscore-tokenizer
+output_file: models/tokenizer/brainscore-bpe-russian.json
+data:
+  iterator:
+    dataset:
+      path: wikimedia/wikipedia
+      name: 20231101.ru

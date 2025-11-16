@@ -8,7 +8,7 @@ import logging
 import os
 import sys
 
-from datasets import Dataset, DatasetDict
+from datasets import Dataset, DatasetDict, load_from_disk
 import hydra
 from omegaconf import DictConfig, OmegaConf, open_dict
 from transformers import (
@@ -70,70 +70,78 @@ def train_lm(cfg: DictConfig) -> None:
         prematurely.
     """
     log.info(f"Config:\n{OmegaConf.to_yaml(cfg)}")
-    ds_dict: DatasetDict = hydra.utils.instantiate(cfg.dataset, _convert_="object")
     tokenizer: PreTrainedTokenizerFast = hydra.utils.instantiate(cfg.tokenizer)
-    if not cfg.data.get("is_tokenized", False):
-        log.info("Tokenizing dataset.")
-        ds_dict = ds_dict.map(
-            lambda examples: tokenizer(
-                examples[cfg.text_field]
-            ),
-            batched=True,
-        )
+    if not cfg.data.get("load_disk", False):
+        ds_dict: DatasetDict = hydra.utils.instantiate(cfg.dataset, _convert_="object")
+        if not cfg.data.get("is_tokenized", False):
+            log.info("Tokenizing dataset.")
+            ds_dict = ds_dict.map(
+                lambda examples: tokenizer(
+                    examples[cfg.text_field]
+                ),
+                batched=True,
+            )
+        else:
+            log.info("Dataset is already tokenized; proceeding.")
+        # get train and val splits to feed to trainer
+        train_ds: Dataset = ds_dict[cfg.train_split]
+        eval_ds: Dataset = ds_dict[cfg.eval_split]
+        if "args" not in cfg.trainer:
+            log.error("Must provide an args field in the trainer config.")
+            sys.exit(1)
+        # if "output_dir" not in cfg.trainer.args:
+        #     log.error("Must provide an output_dir field in the trainer.args config.")
+        #     sys.exit(1)
+
+        # We create a dummy TrainingArguments purely to make the code simpler, as an actual
+        # TrainingArguments instance will have default values filled in for missing
+        # fields, whereas an OmegaConfig will not. Thus we instantiate a temporary
+        # TrainingArguments object and fill specific values we need from it back into the
+        # original config, we that we do not have to check if the value exists in the config
+        # every time we reference it. We cannot instead directly pass this object to the
+        # Trainer instantiate call near the end of this function because Hydra interprets
+        # dataclasses as (structured) config, so they can't be used as passthrough arguments
+        # to instantiate (TrainingArguments is a dataclass)
+        with open_dict(cfg):
+            training_args_tmp: TrainingArguments = (
+                hydra.utils.instantiate(cfg.trainer.args, _convert_="object")
+                if "args" in cfg.trainer
+                else TrainingArguments(output_dir="./")
+            )
+
+            cfg.trainer.args.update(
+                {
+                    "dataloader_num_workers": training_args_tmp.dataloader_num_workers,
+                    "max_steps": training_args_tmp.max_steps,
+                    "num_train_epochs": training_args_tmp.num_train_epochs,
+                    "output_dir": training_args_tmp.output_dir,
+                    "per_device_train_batch_size": training_args_tmp.per_device_train_batch_size,
+                    "report_to": training_args_tmp.report_to,
+                }
+            )
+
+        if "pack" in cfg and cfg.pack.get("packing", False):
+            train_ds = brainscore_custom.pack_dataset(
+                train_ds,
+                cfg.pack.block_len,
+                cfg.pack.train_max_len,
+                tokenizer.eos_token_id,
+                log
+            )
+            eval_ds = brainscore_custom.pack_dataset(
+                eval_ds,
+                cfg.pack.block_len,
+                cfg.pack.eval_max_len,
+                tokenizer.eos_token_id,
+                log
+            )
+
+        if cfg.data.get("save_disk", False):
+            train_ds.save_to_disk(cfg.data.train_loc)
+            eval_ds.save_to_disk(cfg.data.eval_loc)
     else:
-        log.info("Dataset is already tokenized; proceeding.")
-    # get train and val splits to feed to trainer
-    train_ds: Dataset = ds_dict[cfg.train_split]
-    eval_ds: Dataset = ds_dict[cfg.eval_split]
-    if "args" not in cfg.trainer:
-        log.error("Must provide an args field in the trainer config.")
-        sys.exit(1)
-    # if "output_dir" not in cfg.trainer.args:
-    #     log.error("Must provide an output_dir field in the trainer.args config.")
-    #     sys.exit(1)
-
-    # We create a dummy TrainingArguments purely to make the code simpler, as an actual
-    # TrainingArguments instance will have default values filled in for missing
-    # fields, whereas an OmegaConfig will not. Thus we instantiate a temporary
-    # TrainingArguments object and fill specific values we need from it back into the
-    # original config, we that we do not have to check if the value exists in the config
-    # every time we reference it. We cannot instead directly pass this object to the
-    # Trainer instantiate call near the end of this function because Hydra interprets
-    # dataclasses as (structured) config, so they can't be used as passthrough arguments
-    # to instantiate (TrainingArguments is a dataclass)
-    with open_dict(cfg):
-        training_args_tmp: TrainingArguments = (
-            hydra.utils.instantiate(cfg.trainer.args, _convert_="object")
-            if "args" in cfg.trainer
-            else TrainingArguments(output_dir="./")
-        )
-
-        cfg.trainer.args.update(
-            {
-                "dataloader_num_workers": training_args_tmp.dataloader_num_workers,
-                "max_steps": training_args_tmp.max_steps,
-                "num_train_epochs": training_args_tmp.num_train_epochs,
-                "output_dir": training_args_tmp.output_dir,
-                "per_device_train_batch_size": training_args_tmp.per_device_train_batch_size,
-                "report_to": training_args_tmp.report_to,
-            }
-        )
-
-    if "pack" in cfg and cfg.pack.get("packing", False):
-        train_ds = brainscore_custom.pack_dataset(
-            train_ds,
-            cfg.pack.block_len,
-            cfg.pack.train_max_len,
-            tokenizer.eos_token_id,
-            log
-        )
-        eval_ds = brainscore_custom.pack_dataset(
-            eval_ds,
-            cfg.pack.block_len,
-            cfg.pack.eval_max_len,
-            tokenizer.eos_token_id,
-            log
-        )
+        train_ds = load_from_disk(cfg.data.train_loc)
+        eval_ds = load_from_disk(cfg.data.eval_loc)
 
     if cfg.get("use_iterable_dataset", False):
         log.info("Converting datasets to iterable.")
@@ -224,7 +232,9 @@ def train_lm(cfg: DictConfig) -> None:
         if cfg.get("token_transfer", False):
             for parameter in trainer.model.parameters():
                 parameter.requires_grad = False
-            for parameter in trainer.model.get_input_embeddings():
+            for parameter in trainer.model.get_input_embeddings().parameters():
+                parameter.requires_grad = True
+            for parameter in trainer.model.get_output_embeddings().parameters():
                 parameter.requires_grad = True
 
         model_parameters = filter(lambda p: p.requires_grad, trainer.model.parameters())

@@ -1,0 +1,20 @@
+defaults:
+  - /train-brainscore
+dataset:
+  path: wikimedia/wikipedia
+  name: 20231101.ru
+data:
+  load_disk: true
+  train_loc: models/data/russian_wiki/train
+  eval_loc: models/data/russian_wiki/eval
+tokenizer:
+  tokenizer_file: models/tokenizer/brainscore-bpe-russian.json 
+training_args:
+  report_to: wandb
+  output_dir: models/wandb/russian
+hydra:
+  job:
+    env_set:
+      WANDB_PROJECT: brainscore-russian
+      WANDB_LOG_MODEL: checkpoint
+      WANDB_WATCH: all

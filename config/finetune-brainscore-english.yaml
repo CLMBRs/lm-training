@@ -1,0 +1,22 @@
+defaults:
+  - /train-brainscore
+  - override model/config: from_pretrained
+token_transfer: true
+model:
+  config:
+    pretrained_model_name_or_path: models/wandb/english/best_model
+dataset:
+  path: wikimedia/wikipedia
+  name: 20231101.en
+tokenizer:
+  tokenizer_file: models/tokenizer/brainscore-bpe-english.json
+training_args:
+  report_to: wandb
+  output_dir: models/wandb/english-finetuned
+  num_train_epochs: 25
+hydra:
+  job:
+    env_set:
+      WANDB_PROJECT: brainscore-english-finetuned
+      WANDB_LOG_MODEL: checkpoint
+      WANDB_WATCH: all

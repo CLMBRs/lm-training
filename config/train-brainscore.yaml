@@ -2,13 +2,14 @@ defaults:
   - /train-causal-transformer
   - _self_
   - override dataset: load_brainscore_dataset
+  - override model/config: gpt-2
 training_args:
   hub_strategy: all_checkpoints
   hub_always_push: true
   num_train_epochs: 40
   max_steps: -1
-  per_device_train_batch_size: 64
-  per_device_eval_batch_size: 64
+  per_device_train_batch_size: 16
+  per_device_eval_batch_size: 16
   load_best_model_at_end: true
   eval_strategy: "epoch"
   save_strategy: "epoch"
@@ -16,7 +17,7 @@ training_args:
   logging_first_step: true
   logging_steps: 512
   ignore_data_skip: true
-  dataloader_num_workers: 16
+  dataloader_num_workers: 32
   fp16: true
 dynamic_resume: true
 use_iterable_dataset: true

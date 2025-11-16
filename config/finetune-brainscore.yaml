@@ -2,6 +2,10 @@ defaults:
   - /train-brainscore-english
   - override model/config: from-pretrained
 token_transfer: true
+data:
+  load_disk: true
+  train_loc: models/data/english_wiki/train
+  eval_loc: models/data/english_wiki/eval
 model:
   config:
     pretrained_model_name_or_path: ???
